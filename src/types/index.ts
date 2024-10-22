@@ -35,14 +35,14 @@ export interface StockBalancesInterface {
   [user: string]: StockSymbolBalance;
 }
 
-enum stockType {
+enum StockType {
   regular = "regular",
   minted = "minted",
 }
 
 export interface StockOrderType {
   [user: string]: {
-    [type in stockType]: number;
+    [type in StockType]: number;
   };
 }
 
@@ -72,4 +72,16 @@ export enum actions {
   "getAllStockBalance",
   "getINRBalance",
   "getStockBalance",
+  "onRampINR",
+  "mintStocks",
+  "createSellOrder",
+  "createBuyOrder",
+}
+
+export interface SellOrderPayload {
+  userId: string;
+  stockSymbol: string;
+  quantity: number;
+  price: number;
+  stockType: "yes" | "no";
 }

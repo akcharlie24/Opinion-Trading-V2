@@ -11,6 +11,9 @@ import {
   actionGetStockBalance,
 } from "./worker/actionGetBalances";
 import { actionGetOrderbook } from "./worker/actionGetOrderbook";
+import { actionMintStocks } from "./worker/actionMintStocks";
+import { actionOnRampINR } from "./worker/actionOnRampINR";
+import { actionSellOrder } from "./worker/actionSellOrder";
 
 async function processRequests(request: string) {
   const publisherClient = pubSubManager;
@@ -53,6 +56,21 @@ async function processRequests(request: string) {
 
     case actions.getStockBalance:
       response = actionGetStockBalance(JSON.stringify(req.payload));
+      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      break;
+
+    case actions.onRampINR:
+      response = actionOnRampINR(JSON.stringify(req.payload));
+      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      break;
+
+    case actions.mintStocks:
+      response = actionMintStocks(JSON.stringify(req.payload));
+      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      break;
+
+    case actions.createSellOrder:
+      response = actionSellOrder(JSON.stringify(req.payload));
       publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
   }

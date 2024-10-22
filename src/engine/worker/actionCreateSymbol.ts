@@ -7,6 +7,7 @@ export function actionCreateSymbol(payload: string) {
   const { stockSymbol } = data;
 
   // TODO: early exit if symbol alerady exists
+  // BUT thats the LOOPHOLE -> you will have to search for symbols WHERE ?
 
   if (!stockSymbol) {
     const response = { messsage: "Please enter the stockSymbol" };
