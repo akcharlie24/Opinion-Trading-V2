@@ -66,4 +66,10 @@ export interface OrderBookInterface {
 
 export enum actions {
   "createUser",
+  "createSymbol",
+  "getOrderbook",
+  "getAllINRBalance",
+  "getAllStockBalance",
+  "getINRBalance",
+  "getStockBalance",
 }

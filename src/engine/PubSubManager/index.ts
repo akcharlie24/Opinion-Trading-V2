@@ -25,6 +25,7 @@ export class PubSubManager {
     return PubSubManager.instance;
   }
 
+  // TODO: add logging while connecting and performing async calls
   async connectToRedis(): Promise<void> {
     try {
       if (!this.subscriberClient.isOpen) {

@@ -5,7 +5,7 @@ import { actions } from "../../types";
 import { pubSubManager } from "../PubSubManager";
 const { v4: uuid } = require("uuid");
 
-export const createUser = async (req: Request, res: Response) => {
+export const getOrderBook = async (req: Request, res: Response) => {
   if (!redisClient || !redisClient?.isOpen) {
     await createRedisClientConnection();
   }
@@ -13,14 +13,11 @@ export const createUser = async (req: Request, res: Response) => {
   const subscriberClient = pubSubManager;
   await subscriberClient.connectToRedis();
 
-  const userId = req.params.userId;
-
   const id = uuid();
 
   const data = JSON.stringify({
     id: id,
-    action: actions.createUser,
-    payload: { userId: userId },
+    action: actions.getOrderbook,
   });
 
   try {
@@ -28,8 +25,7 @@ export const createUser = async (req: Request, res: Response) => {
 
     await subscriberClient.listenForResponse(id, (message) => {
       const response = JSON.parse(message);
-      // TODO: handle status codes
-      res.status(200).json({ message: response.message });
+      res.status(200).send(response.data);
     });
   } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });

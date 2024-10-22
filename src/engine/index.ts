@@ -2,7 +2,15 @@ import { REQ_QUEUE } from "../backendApi/constants";
 import { actions } from "../types";
 import { pubSubManager } from "./PubSubManager";
 import { createRedisClientConnection, redisClient } from "./RedisClient";
+import { actionCreateSymbol } from "./worker/actionCreateSymbol";
 import { actionCreateUser } from "./worker/actionCreateUser";
+import {
+  actionGetAllINRBalance,
+  actionGetAllStockBalance,
+  actionGetINRBalance,
+  actionGetStockBalance,
+} from "./worker/actionGetBalances";
+import { actionGetOrderbook } from "./worker/actionGetOrderbook";
 
 async function processRequests(request: string) {
   const publisherClient = pubSubManager;
@@ -10,9 +18,41 @@ async function processRequests(request: string) {
 
   const req = JSON.parse(request);
 
+  let response: any;
+
   switch (req.action) {
     case actions.createUser:
-      const response = actionCreateUser(JSON.stringify(req.payload));
+      response = actionCreateUser(JSON.stringify(req.payload));
+      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      break;
+
+    case actions.createSymbol:
+      response = actionCreateSymbol(JSON.stringify(req.payload));
+      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      break;
+
+    case actions.getOrderbook:
+      response = actionGetOrderbook();
+      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      break;
+
+    case actions.getAllINRBalance:
+      response = actionGetAllINRBalance();
+      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      break;
+
+    case actions.getAllStockBalance:
+      response = actionGetAllStockBalance();
+      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      break;
+
+    case actions.getINRBalance:
+      response = actionGetINRBalance(JSON.stringify(req.payload));
+      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      break;
+
+    case actions.getStockBalance:
+      response = actionGetStockBalance(JSON.stringify(req.payload));
       publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
   }
