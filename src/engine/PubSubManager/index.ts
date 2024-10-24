@@ -73,6 +73,7 @@ export class PubSubManager {
     } catch (err) {
       console.log("Error subscribing ");
     }
+    // TODO: should add a finally here in case the pub/sub has some error
   }
 }
 

@@ -26,6 +26,7 @@ export function actionMintStocks(payload: string) {
   }
 
   // TODO: LOOPHOLE here is that the stockSymbol may yet not be created
+  //  In new approach -> check for stock symbol in orderbook simple as that
   if (!(stockSymbol in STOCK_BALANCES[userId])) {
     STOCK_BALANCES[userId][stockSymbol] = {};
   }

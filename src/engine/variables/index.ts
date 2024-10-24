@@ -22,12 +22,12 @@ export const ORDERBOOK: OrderBookInterface = {
   //       total: 15,
   //       orders: {
   //         user1: {
-  //           regular: 5,
-  //           minted: 0,
+  //           quantity: 5,
+  //           type: "regular",
   //         },
   //         user2: {
-  //           regular: 10,
-  //           minted: 0,
+  //           quantity: 10,
+  //           type : "regular",
   //         },
   //       },
   //     },

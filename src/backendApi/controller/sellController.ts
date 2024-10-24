@@ -15,6 +15,11 @@ export const createSellOrder = async (req: Request, res: Response) => {
 
   const { userId, stockSymbol, quantity, price, stockType } = req.body;
 
+  if (stockType !== "yes" && stockType !== "no") {
+    console.log(stockType);
+    res.status(404).json({ message: "Invalid Stock Type" });
+  }
+
   const id = uuid();
 
   const data = JSON.stringify({
@@ -31,6 +36,9 @@ export const createSellOrder = async (req: Request, res: Response) => {
 
   try {
     await redisClient?.lPush(REQ_QUEUE, data);
+
+    // FIX: awaits might not be needed as its just attaching an event listener to it and
+    // might be causing some latency issues
 
     await subscriberClient.listenForResponse(id, (message) => {
       const response = JSON.parse(message);

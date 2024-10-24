@@ -1,4 +1,4 @@
-import { STOCK_BALANCES } from "../variables";
+import { ORDERBOOK, STOCK_BALANCES } from "../variables";
 
 // TODO: can add return types later
 export function actionCreateSymbol(payload: string) {
@@ -23,6 +23,15 @@ export function actionCreateSymbol(payload: string) {
     // 1. user mints on that stock symbol
     // 2. user buys that stock
     // One Loophole that stock might not exist
+
+    // TODO: create symbols in the orderbook instead  also FIX the check conditions if any related to stocks alerady being present in portfolio
+
+    ORDERBOOK[stockSymbol] = {
+      yes: {},
+      no: {},
+    };
+
+    // TODO: remove the stockSymbol creation in portfolio
 
     STOCK_BALANCES[user][stockSymbol] = {
       yes: {
