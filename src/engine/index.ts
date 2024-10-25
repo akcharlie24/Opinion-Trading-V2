@@ -2,6 +2,7 @@ import { REQ_QUEUE } from "../backendApi/constants";
 import { actions } from "../types";
 import { pubSubManager } from "./PubSubManager";
 import { createRedisClientConnection, redisClient } from "./RedisClient";
+import { actionBuyOrder } from "./worker/actionBuyOrder";
 import { actionCreateSymbol } from "./worker/actionCreateSymbol";
 import { actionCreateUser } from "./worker/actionCreateUser";
 import {
@@ -26,52 +27,58 @@ async function processRequests(request: string) {
   switch (req.action) {
     case actions.createUser:
       response = actionCreateUser(JSON.stringify(req.payload));
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
 
     case actions.createSymbol:
       response = actionCreateSymbol(JSON.stringify(req.payload));
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
 
     case actions.getOrderbook:
       response = actionGetOrderbook();
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
 
     case actions.getAllINRBalance:
       response = actionGetAllINRBalance();
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
 
     case actions.getAllStockBalance:
       response = actionGetAllStockBalance();
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
 
     case actions.getINRBalance:
       response = actionGetINRBalance(JSON.stringify(req.payload));
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
 
     case actions.getStockBalance:
       response = actionGetStockBalance(JSON.stringify(req.payload));
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
 
     case actions.onRampINR:
       response = actionOnRampINR(JSON.stringify(req.payload));
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
 
     case actions.mintStocks:
       response = actionMintStocks(JSON.stringify(req.payload));
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
 
+    // TODO: add ws pub-sub
     case actions.createSellOrder:
       response = actionSellOrder(JSON.stringify(req.payload));
-      publisherClient.publishResponse(req.id, JSON.stringify(response));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
+      // TODO: publish websocket events too
+      break;
+
+    case actions.createBuyOrder:
+      response = actionBuyOrder(JSON.stringify(req.payload));
       break;
   }
 }

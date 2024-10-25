@@ -20,7 +20,7 @@ export function createReverseSellOrder(
   INR_BALANCES[userId].balance -= quantity * priceToMatch * 100;
   INR_BALANCES[userId].locked += quantity * priceToMatch * 100;
 
-  // TODO: sanitization to check prices >= 10
+  // TODO: sanitization to check prices >= 10 CAN do that on frontend
   const priceToSell = 10 - priceToMatch;
 
   const priceString = priceToSell.toString();
@@ -53,67 +53,16 @@ export function matchTrade(
   userId: string,
   priceToMatch: number,
   quantity: number,
-  stockType: string,
+  stockType: "yes" | "no",
   stockSymbol: string,
 ) {
-  const orders = Object.keys(
-    ORDERBOOK[stockSymbol][stockType][priceToMatch].orders,
-  );
-  let remainingQuantity = parseFloat(quantity);
-  let priceToMatchString = priceToMatch.toString();
-  let totalStocksTraded = 0;
-  for (let order of orders) {
-    if (
-      // TODO: its best to delete the user with 0 stocks but here we can simply check
-      ORDERBOOK[stockSymbol][stockType][priceToMatchString].orders[order] == 0
-    )
-      continue;
-    if (
-      ORDERBOOK[stockSymbol][stockType][priceToMatchString].orders[order] <=
-      remainingQuantity
-    ) {
-      let balanceTraded =
-        ORDERBOOK[stockSymbol][stockType][priceToMatchString].orders[order] *
-        priceToMatch *
-        100;
-      let stocksTraded =
-        ORDERBOOK[stockSymbol][stockType][priceToMatchString].orders[order];
+  //@ts-ignore
+  const pricesAvailable = Object.keys(ORDERBOOK[stockSymbol][stockType])
+    .map((price) => parseFloat(price))
+    .sort((a, b) => a - b);
 
-      INR_BALANCES[order].balance += balanceTraded;
-      INR_BALANCES[userId].balance -= balanceTraded;
-      STOCK_BALANCES[order][stockSymbol][stockType].locked -= stocksTraded;
-      STOCK_BALANCES[userId][stockSymbol][stockType].quantity += stocksTraded;
-      ORDERBOOK[stockSymbol][stockType][priceToMatchString].orders[order] -=
-        stocksTraded;
-
-      totalStocksTraded += stocksTraded;
-
-      remainingQuantity -= stocksTraded;
-      if (remainingQuantity === 0) break;
-    } else {
-      let balanceTraded = remainingQuantity * priceToMatch * 100;
-      let stocksTraded = remainingQuantity;
-
-      INR_BALANCES[order].balance += balanceTraded;
-      INR_BALANCES[userId].balance -= balanceTraded;
-      STOCK_BALANCES[order][stockSymbol][stockType].locked -= stocksTraded;
-      STOCK_BALANCES[userId][stockSymbol][stockType].quantity += stocksTraded;
-      ORDERBOOK[stockSymbol][stockType][priceToMatchString].orders[order] -=
-        stocksTraded;
-
-      totalStocksTraded += stocksTraded;
-
-      // TODO: its obvios that it will be 0 here
-      remainingQuantity -= stocksTraded;
-      if (remainingQuantity === 0) break;
-    }
-  }
-  ORDERBOOK[stockSymbol][stockType][priceToMatchString].total -=
-    totalStocksTraded;
-
-  if (remainingQuantity === 0) return;
-  else {
-    createReverseSellOrder(priceToMatch, remainingQuantity);
-    return;
+  let remainingQuantity = quantity;
+  for (let price of pricesAvailable) {
+    const priceString = price.toString();
   }
 }

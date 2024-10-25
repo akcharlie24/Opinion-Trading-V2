@@ -37,8 +37,6 @@ export function actionSellOrder(payload: string) {
     ORDERBOOK[stockSymbol][stockType] = {};
 
   STOCK_BALANCES[userId][stockSymbol][stockType]!.quantity -= quantity;
-  // Sell directly and dont lock in case of -> matching sell orders
-  // STOCK_BALANCES[userId][stockSymbol][stockType]!.locked += quantity;
 
   const priceString = priceToSell.toString();
 
@@ -55,15 +53,16 @@ export function actionSellOrder(payload: string) {
 
   if (pricesAvailableToMatch.length > 0) {
     const sortedPricesToMatch = pricesAvailableToMatch.sort((a, b) => a - b);
-    console.log(sortedPricesToMatch);
 
     // TODO: can do the math in paise as well -> currently doing in rupee
+    // math -> math.min or math.round can be used
     // TODO: below logic can be re-written neatly (maybe make a helper function)
 
     for (const sortedPrice of sortedPricesToMatch) {
       if (remainingQuantity == 0) break;
       if (priceToSell + sortedPrice <= 10) {
         const ordersToMatch = Object.keys(
+          // make a lil clean make a sortedPriceString simply
           ORDERBOOK[stockSymbol][oppositeStockType]![sortedPrice.toString()]
             .orders,
         );
@@ -77,7 +76,6 @@ export function actionSellOrder(payload: string) {
                   sortedPrice.toString()
                 ].orders[order].quantity
               : remainingQuantity;
-          console.log(stocksTraded);
 
           const oppositeBalanceTradedRegular = sortedPrice * stocksTraded * 100;
           const oppositeBalanceTradedMinted =
@@ -139,6 +137,7 @@ export function actionSellOrder(payload: string) {
       return response;
     }
   }
+
   if (pricesAvailableToMatch.length == 0 || remainingQuantity != 0) {
     STOCK_BALANCES[userId][stockSymbol][stockType]!.locked += remainingQuantity;
 
@@ -169,8 +168,6 @@ export function actionSellOrder(payload: string) {
         },
       };
     }
-    console.log("hi");
-    // Put it above
     const response = {
       message: `Market sell ${stockType} Order placed successfully`,
     };

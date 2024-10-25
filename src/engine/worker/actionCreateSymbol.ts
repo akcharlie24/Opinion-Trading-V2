@@ -14,6 +14,11 @@ export function actionCreateSymbol(payload: string) {
     return response;
   }
 
+  if (stockSymbol in ORDERBOOK) {
+    const response = { message: "Symbol alerady exists" };
+    return response;
+  }
+
   const users = Object.keys(STOCK_BALANCES);
   // TODO: handle Rare Case where there may be no user still trying to create stockSymbol
 

@@ -1,5 +1,5 @@
 import { BuyOrderPayload } from "../../types";
-import { createReverseSellOrder, matchTrade } from "../helper";
+import { matchTrade } from "../helper";
 import { INR_BALANCES, ORDERBOOK, STOCK_BALANCES } from "../variables";
 
 export function actionBuyOrder(payload: string) {
@@ -14,15 +14,20 @@ export function actionBuyOrder(payload: string) {
   let balance = INR_BALANCES[userId].balance;
   const totalBuyPrice = quantity * price;
 
+  // TODO: best match even if the same price if available ?
+  // so this is a problem -> PROBO doesnt have a best match thing -> just puts your order at pending until its matched
+  // sol -> 1. either do a best match (will be doing this for now (dont need matching in the reverse orders this way))
+  //     -> 2. (better approach will change to this one later on) let the user buy at 8.5 and do minting (no best match) -> just create a reverse and probo makes profit by minting
+
+  // TODO: fix in the case of best match -> this should not come up as user might have enough funds to best match
   if (balance < totalBuyPrice) {
     const response = { message: "Not enough balance" };
     return response;
   }
 
-  // TODO: will need to handle more Gracefully when creating stockSymbols in ORDERBOOK on create symbol route
   if (!(stockSymbol in ORDERBOOK)) {
     const response = {
-      message: "No such stock exists for buying in orderbook",
+      message: "No such stock exists for buying",
     };
     return response;
   }
@@ -66,52 +71,36 @@ export function actionBuyOrder(payload: string) {
     };
   }
 
-  //lowest match
-  // TODO: modify this case to be a recursive bestmatch -> even in case of matchedPrice
-  if (priceToBuy > sortedPrices[0]) {
-    try {
-      matchTrade(sortedPrices[0]);
-      // TODO: Add message as per cases
+  matchTrade(userId, price, quantity, stockType, stockSymbol);
 
-      res.status(200).json({ message: "Trade executed" });
-      return;
-    } catch (error) {
-      console.log(error);
-      res.status(404).json({ message: "Transaction Failed" });
-      return;
-    }
-  }
-
-  //normal matching
-  const matchedPrice = pricesAvailable.find((price) => price === priceToBuy);
-
-  if (!matchedPrice) {
-    try {
-      createReverseSellOrder(priceToBuy, quantity);
-
-      let orderToPush = JSON.stringify({
-        [stockSymbol]: ORDERBOOK[stockSymbol],
-      });
-      await client.lPush("orderbook", orderToPush);
-
-      res.status(200).json({ message: "Trade executed successfully" });
-    } catch (error) {
-      res.status(404).json({ message: "Transaction Failed" });
-    }
-  } else {
-    try {
-      matchTrade(matchedPrice);
-      // TODO: even if matching occures we need to check if its availabale at lower price
-
-      let orderToPush = JSON.stringify({
-        [stockSymbol]: ORDERBOOK[stockSymbol],
-      });
-      await client.lPush("orderbook", orderToPush);
-
-      res.status(200).json({ message: "Trade executed successfully" });
-    } catch (error) {
-      console.log(error);
-      res.status(404).json({ message: "Transaction Failed" });
-    }
-  }
+  // const matchedPrice = pricesAvailable.find((price) => price === priceToBuy);
+  // if (!matchedPrice) {
+  //   try {
+  //     createReverseSellOrder(priceToBuy, quantity);
+  //
+  //     let orderToPush = JSON.stringify({
+  //       [stockSymbol]: ORDERBOOK[stockSymbol],
+  //     });
+  //     await client.lPush("orderbook", orderToPush);
+  //
+  //     res.status(200).json({ message: "Trade executed successfully" });
+  //   } catch (error) {
+  //     res.status(404).json({ message: "Transaction Failed" });
+  //   }
+  // } else {
+  //   try {
+  //     matchTrade(matchedPrice);
+  //     // TODO: even if matching occures we need to check if its availabale at lower price
+  //
+  //     let orderToPush = JSON.stringify({
+  //       [stockSymbol]: ORDERBOOK[stockSymbol],
+  //     });
+  //     await client.lPush("orderbook", orderToPush);
+  //
+  //     res.status(200).json({ message: "Trade executed successfully" });
+  //   } catch (error) {
+  //     console.log(error);
+  //     res.status(404).json({ message: "Transaction Failed" });
+  //   }
+  // }
 }
