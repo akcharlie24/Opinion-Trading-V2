@@ -79,6 +79,7 @@ async function processRequests(request: string) {
 
     case actions.createBuyOrder:
       response = actionBuyOrder(JSON.stringify(req.payload));
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
   }
 }

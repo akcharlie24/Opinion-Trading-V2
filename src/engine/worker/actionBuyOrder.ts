@@ -71,36 +71,13 @@ export function actionBuyOrder(payload: string) {
     };
   }
 
-  matchTrade(userId, price, quantity, stockType, stockSymbol);
-
-  // const matchedPrice = pricesAvailable.find((price) => price === priceToBuy);
-  // if (!matchedPrice) {
-  //   try {
-  //     createReverseSellOrder(priceToBuy, quantity);
-  //
-  //     let orderToPush = JSON.stringify({
-  //       [stockSymbol]: ORDERBOOK[stockSymbol],
-  //     });
-  //     await client.lPush("orderbook", orderToPush);
-  //
-  //     res.status(200).json({ message: "Trade executed successfully" });
-  //   } catch (error) {
-  //     res.status(404).json({ message: "Transaction Failed" });
-  //   }
-  // } else {
-  //   try {
-  //     matchTrade(matchedPrice);
-  //     // TODO: even if matching occures we need to check if its availabale at lower price
-  //
-  //     let orderToPush = JSON.stringify({
-  //       [stockSymbol]: ORDERBOOK[stockSymbol],
-  //     });
-  //     await client.lPush("orderbook", orderToPush);
-  //
-  //     res.status(200).json({ message: "Trade executed successfully" });
-  //   } catch (error) {
-  //     console.log(error);
-  //     res.status(404).json({ message: "Transaction Failed" });
-  //   }
-  // }
+  try {
+    // TODO: handle responses a little gracefully
+    matchTrade(userId, price, quantity, stockType, stockSymbol);
+    const response = { message: "Buy Order Placed Successfully" };
+    return response;
+  } catch (err) {
+    const response = { message: `Error Purchasing \n ${err}` };
+    return response;
+  }
 }
