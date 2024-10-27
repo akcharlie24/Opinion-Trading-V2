@@ -16,6 +16,8 @@ import { actionMintStocks } from "./worker/actionMintStocks";
 import { actionOnRampINR } from "./worker/actionOnRampINR";
 import { actionSellOrder } from "./worker/actionSellOrder";
 
+// FIX: handle awaits for the pub/sub -> causing latency issues in responses (might be prob in some await where await not needed)
+
 async function processRequests(request: string) {
   const publisherClient = pubSubManager;
   await publisherClient.connectToRedis();

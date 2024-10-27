@@ -9,10 +9,7 @@ import orderRoutes from "./orderRoutes";
 
 const router = express.Router();
 
-// router.get("/:stockSymbol", getOrderbook);
-// router.use("/reset", resetroutes)
-// router.use("/order", orderRoutes);
-
+// TODO: add a reset route
 router.use("/user", userRoutes);
 router.use("/symbol", symbolRoutes);
 router.use("/orderbook", orderbookRoutes);

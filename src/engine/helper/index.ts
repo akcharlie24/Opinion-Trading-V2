@@ -11,10 +11,13 @@ export function createReverseSellOrder(
 
   const oppositeStock = stockType === "yes" ? "no" : "yes";
 
-  // no need of this below one
+  // no need of this below one but sanity chk
   if (!(stockSymbol in ORDERBOOK)) ORDERBOOK[stockSymbol] = {};
   if (!(oppositeStock in ORDERBOOK[stockSymbol]))
     ORDERBOOK[stockSymbol][oppositeStock] = {};
+
+  // TODO: do some clean math and dont be lazy
+  priceToMatch = priceToMatch / 100;
 
   priceToMatch = 10 - priceToMatch;
 
@@ -59,16 +62,21 @@ export function matchTrade(
     .map((price) => parseFloat(price))
     .sort((a, b) => a - b);
 
+  // TODO: can handle the math more precisely
+  const priceToMatchCompare = priceToMatch / 100;
+
   let remainingQuantity = quantity;
   for (const price of pricesAvailable) {
-    if (remainingQuantity == 0) break;
-    if (price > priceToMatch) break;
+    if (remainingQuantity === 0) break;
+    if (price > priceToMatchCompare) break;
+
     const priceString = price.toString();
 
     const orders = Object.keys(
       ORDERBOOK[stockSymbol][stockType]![priceString].orders,
     );
 
+    // wont happen as we'll delete but for sanity chk
     if (orders.length == 0) break;
 
     for (const order of orders) {
@@ -113,6 +121,7 @@ export function matchTrade(
         STOCK_BALANCES[order][stockSymbol][oppositeStock].quantity +=
           stocksTraded;
       }
+
       remainingQuantity -= stocksTraded;
 
       ORDERBOOK[stockSymbol][stockType]![priceString].orders[order].quantity -=

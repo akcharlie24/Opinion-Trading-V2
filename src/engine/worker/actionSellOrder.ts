@@ -6,7 +6,9 @@ export function actionSellOrder(payload: string) {
 
   let { userId, stockSymbol, quantity, price, stockType } = data;
 
+  // TODO: handle math gracefully
   const priceToSell = price / 100;
+  console.log(priceToSell);
 
   if (!STOCK_BALANCES[userId]) {
     const response = { message: "User doesnt Exist" };
