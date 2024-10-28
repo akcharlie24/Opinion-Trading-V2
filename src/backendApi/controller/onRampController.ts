@@ -25,12 +25,12 @@ export const onRampMoney = async (req: Request, res: Response) => {
   });
 
   try {
-    await redisClient?.lPush(REQ_QUEUE, data);
-
     await subscriberClient.listenForResponse(id, (message) => {
       const response = JSON.parse(message);
       res.status(200).json({ message: response.message });
     });
+
+    await redisClient?.lPush(REQ_QUEUE, data);
   } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });
   }

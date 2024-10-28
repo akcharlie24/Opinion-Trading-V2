@@ -21,12 +21,12 @@ export const getOrderBook = async (req: Request, res: Response) => {
   });
 
   try {
-    await redisClient?.lPush(REQ_QUEUE, data);
-
     await subscriberClient.listenForResponse(id, (message) => {
       const response = JSON.parse(message);
       res.status(200).send(response.data);
     });
+
+    await redisClient?.lPush(REQ_QUEUE, data);
   } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });
   }
