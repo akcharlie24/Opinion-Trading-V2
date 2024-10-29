@@ -4,17 +4,12 @@ export class PubSubManager {
   // initially koi instance nhi bna rhe
   private static instance: PubSubManager | null = null;
   private subscriberClient: RedisClientType;
-  private publisherClient: RedisClientType;
 
   private constructor() {
     this.subscriberClient = createClient();
-    this.publisherClient = createClient();
 
     this.subscriberClient.on("error", (err) =>
       console.log("redis sub error", err),
-    );
-    this.publisherClient.on("error", (err) =>
-      console.log("redis pub error", err),
     );
   }
 
@@ -34,35 +29,16 @@ export class PubSubManager {
       console.log("Error Creating subscriberClient");
       console.log(err);
     }
-    try {
-      if (!this.publisherClient.isOpen) {
-        await this.publisherClient.connect();
-      }
-    } catch (err) {
-      console.log("Error Creating subscriberClient");
-      console.log(err);
-    }
   }
 
-  async publishResponse(reqId: string, payload: string): Promise<void> {
-    await this.connectToRedis();
-
-    try {
-      await this.publisherClient.publish(reqId, payload);
-    } catch (err) {
-      console.log("Error Publishing Response ");
-      console.log(err);
-    }
-  }
-
-  async listenForResponse(
-    reqId: string,
+  async listenForSymbol(
+    stockSymbol: string,
     callback: (data: string) => void,
   ): Promise<void> {
     await this.connectToRedis();
 
     try {
-      await this.subscriberClient.subscribe(reqId, (message: string) => {
+      await this.subscriberClient.subscribe(stockSymbol, (message: string) => {
         try {
           callback(message);
         } catch (err) {
@@ -72,6 +48,12 @@ export class PubSubManager {
     } catch (err) {
       console.log("Error subscribing ");
     }
+  }
+
+  async unsubscribeFromStock(stockSymbol: string): Promise<void> {
+    await this.connectToRedis();
+    await this.subscriberClient.unsubscribe(stockSymbol);
+    console.log("unsubscribed from stock");
   }
 }
 

@@ -6,6 +6,11 @@ export function actionBuyOrder(payload: string) {
   const data = JSON.parse(payload) as BuyOrderPayload;
   let { userId, stockSymbol, quantity, price, stockType } = data;
 
+  if (price <= 0) {
+    const response = { message: "Price cannot be 0 or lesser" };
+    return response;
+  }
+
   if (!(userId in INR_BALANCES)) {
     const response = { message: "User Not Found" };
     return response;

@@ -1,4 +1,3 @@
-// Tests taken from Dipen
 const axios = require("axios");
 const WebSocket = require("ws");
 
