@@ -62,6 +62,9 @@ export class PubSubManager {
     await this.connectToRedis();
 
     try {
+      // FIX: unsubscribe to the reqId after executing the callback and also do a promise to unsubscribe in 2 sec response timed out
+      //  BEST: fix would be to rather create a single channel and implement a map (will need refactoring)
+
       await this.subscriberClient.subscribe(reqId, (message: string) => {
         try {
           callback(message);
