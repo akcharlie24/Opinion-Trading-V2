@@ -35,6 +35,7 @@ export const createSellOrder = async (req: Request, res: Response) => {
   });
 
   try {
+    // FIX: this is the bad thing -> creating multiple redis channels
     await subscriberClient.listenForResponse(id, (message) => {
       const response = JSON.parse(message);
       res.status(200).json({ message: response.message });

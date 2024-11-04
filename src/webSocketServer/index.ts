@@ -95,6 +95,7 @@ async function startWebSocket() {
   });
 
   wss.on("connection", async function connection(ws: WebSocket) {
+    //@ts-ignore
     ws.on("message", function message(data) {
       const message = JSON.parse(data.toString());
 
