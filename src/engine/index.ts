@@ -2,6 +2,7 @@ import { REQ_QUEUE } from "../backendApi/constants";
 import { actions } from "../types";
 import { pubSubManager } from "./PubSubManager";
 import { createRedisClientConnection, redisClient } from "./RedisClient";
+import { ORDERBOOK } from "./variables";
 import { actionBuyOrder } from "./worker/actionBuyOrder";
 import { actionCreateSymbol } from "./worker/actionCreateSymbol";
 import { actionCreateUser } from "./worker/actionCreateUser";
@@ -15,8 +16,6 @@ import { actionGetOrderbook } from "./worker/actionGetOrderbook";
 import { actionMintStocks } from "./worker/actionMintStocks";
 import { actionOnRampINR } from "./worker/actionOnRampINR";
 import { actionSellOrder } from "./worker/actionSellOrder";
-
-// FIX: handle awaits for the pub/sub -> causing latency issues in responses (might be prob in some await where await not needed)
 
 async function processRequests(request: string) {
   const publisherClient = pubSubManager;
@@ -76,12 +75,32 @@ async function processRequests(request: string) {
     case actions.createSellOrder:
       response = actionSellOrder(JSON.stringify(req.payload));
       await publisherClient.publishResponse(req.id, JSON.stringify(response));
-      // TODO: publish websocket events too
+
+      const sellPayload = req.payload;
+      const sellOrder = {
+        [sellPayload.stockSymbol]: ORDERBOOK[sellPayload.stockSymbol],
+      };
+      await publisherClient.publishResponse(
+        sellPayload.stockSymbol,
+        JSON.stringify(sellOrder),
+      );
+
       break;
 
     case actions.createBuyOrder:
       response = actionBuyOrder(JSON.stringify(req.payload));
       await publisherClient.publishResponse(req.id, JSON.stringify(response));
+
+      const buyPayload = req.payload;
+      const buyOrder = {
+        [buyPayload.stockSymbol]: ORDERBOOK[buyPayload.stockSymbol],
+      };
+
+      await publisherClient.publishResponse(
+        buyPayload.stockSymbol,
+        JSON.stringify(buyOrder),
+      );
+
       break;
   }
 }

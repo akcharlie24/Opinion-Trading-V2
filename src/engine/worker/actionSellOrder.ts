@@ -6,9 +6,13 @@ export function actionSellOrder(payload: string) {
 
   let { userId, stockSymbol, quantity, price, stockType } = data;
 
+  if (price <= 0) {
+    const response = { message: "Price cannot be 0 or lesser" };
+    return response;
+  }
+
   // TODO: handle math gracefully
   const priceToSell = price / 100;
-  console.log(priceToSell);
 
   if (!STOCK_BALANCES[userId]) {
     const response = { message: "User doesnt Exist" };

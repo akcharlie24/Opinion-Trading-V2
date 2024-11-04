@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from "redis";
+import { createClient } from "redis";
 
 let redisClient: ReturnType<typeof createClient> | null = null;
 
