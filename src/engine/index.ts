@@ -15,6 +15,7 @@ import {
 import { actionGetOrderbook } from "./worker/actionGetOrderbook";
 import { actionMintStocks } from "./worker/actionMintStocks";
 import { actionOnRampINR } from "./worker/actionOnRampINR";
+import { actionResetData } from "./worker/actionResetData";
 import { actionSellOrder } from "./worker/actionSellOrder";
 
 async function processRequests(request: string) {
@@ -101,6 +102,12 @@ async function processRequests(request: string) {
         JSON.stringify(buyOrder),
       );
 
+      break;
+
+    case actions.resetData:
+      response = actionResetData();
+
+      await publisherClient.publishResponse(req.id, JSON.stringify(response));
       break;
   }
 }

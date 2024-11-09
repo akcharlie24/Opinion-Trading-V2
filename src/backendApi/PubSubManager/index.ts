@@ -68,6 +68,8 @@ export class PubSubManager {
       await this.subscriberClient.subscribe(reqId, (message: string) => {
         try {
           callback(message);
+          // below might be a partial fix
+          // this.subscriberClient.unsubscribe(reqId)
         } catch (err) {
           console.log("Error excecuting response recieved");
         }

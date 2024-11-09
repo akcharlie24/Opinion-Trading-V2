@@ -72,6 +72,7 @@ export enum actions {
   "mintStocks",
   "createSellOrder",
   "createBuyOrder",
+  "resetData",
 }
 
 export interface SellOrderPayload {

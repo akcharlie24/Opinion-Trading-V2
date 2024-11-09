@@ -6,6 +6,8 @@ const port = 3000;
 
 app.use(express.json());
 
+// FIX: refactor the code to match the response schema
+
 app.use("/api/v1", routes);
 
 app.get("/", (req: Request, res: Response) => {

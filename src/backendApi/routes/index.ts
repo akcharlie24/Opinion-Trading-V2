@@ -6,10 +6,14 @@ import balanceRoutes from "./balanceRoutes";
 import onRampRoute from "./onRampRoute";
 import mintRoute from "./mintRoute";
 import orderRoutes from "./orderRoutes";
+import { resetController } from "../controller/resetController";
 
 const router = express.Router();
 
 // TODO: add a reset route
+
+router.use("/reset", resetController);
+
 router.use("/user", userRoutes);
 router.use("/symbol", symbolRoutes);
 router.use("/orderbook", orderbookRoutes);
