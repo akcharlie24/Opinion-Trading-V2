@@ -7,7 +7,9 @@ export async function createRedisClientConnection(): Promise<void> {
 
   if (!redisClient || !redisClient?.isOpen) {
     try {
-      const client = createClient();
+      const client = createClient({
+        url: process.env.UPSTASH_REDIS_URL,
+      });
       await client.connect();
 
       redisClient = client;

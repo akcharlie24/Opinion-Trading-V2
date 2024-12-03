@@ -3,6 +3,6 @@ import { getOrderBook } from "../controller/orderbookController";
 
 const router = express.Router();
 
-router.get("", getOrderBook);
+router.get("/", getOrderBook);
 
 export default router;

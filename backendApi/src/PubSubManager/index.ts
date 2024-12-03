@@ -1,14 +1,17 @@
 import { createClient, RedisClientType } from "redis";
 
 export class PubSubManager {
-  // initially koi instance nhi bna rhe
   private static instance: PubSubManager | null = null;
   private subscriberClient: RedisClientType;
   private publisherClient: RedisClientType;
 
   private constructor() {
-    this.subscriberClient = createClient();
-    this.publisherClient = createClient();
+    this.subscriberClient = createClient({
+      url: process.env.UPSTASH_REDIS_URL,
+    });
+    this.publisherClient = createClient({
+      url: process.env.UPSTASH_REDIS_URL,
+    });
 
     this.subscriberClient.on("error", (err) =>
       console.log("redis sub error", err),

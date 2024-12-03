@@ -126,6 +126,7 @@ async function pullRequests() {
         const request = JSON.parse(requestRecieved!.element);
         if (request) {
           const requestString = JSON.stringify(request);
+          // TODO: in the longer run this might cause memory issues as its spawning a new processRequests in call-stack (fix it)
           processRequests(requestString);
         }
       } catch (error) {
