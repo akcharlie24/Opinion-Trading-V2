@@ -38,7 +38,7 @@ export function actionCreateSymbol(payload: string) {
 
     // TODO: remove the stockSymbol creation in portfolio
 
-    STOCK_BALANCES[user][stockSymbol] = {
+    STOCK_BALANCES[user]![stockSymbol] = {
       yes: {
         quantity: 0,
         locked: 0,

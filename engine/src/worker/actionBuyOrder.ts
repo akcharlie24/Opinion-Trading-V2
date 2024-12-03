@@ -16,7 +16,7 @@ export function actionBuyOrder(payload: string) {
     return response;
   }
 
-  let balance = INR_BALANCES[userId].balance;
+  let balance = INR_BALANCES[userId]!.balance;
   const totalBuyPrice = quantity * price;
 
   // TODO: best match even if the same price if available ?
@@ -37,7 +37,7 @@ export function actionBuyOrder(payload: string) {
     return response;
   }
 
-  if (!(stockType in ORDERBOOK[stockSymbol])) {
+  if (!(stockType in ORDERBOOK[stockSymbol]!)) {
     const response = { message: "No stock available for buying in orderbook" };
     return response;
   }
@@ -55,8 +55,8 @@ export function actionBuyOrder(payload: string) {
     STOCK_BALANCES[userId] = {};
   }
 
-  if (!(stockSymbol in STOCK_BALANCES[userId])) {
-    STOCK_BALANCES[userId][stockSymbol] = {
+  if (!(stockSymbol in STOCK_BALANCES[userId]!)) {
+    STOCK_BALANCES[userId]![stockSymbol] = {
       yes: {
         quantity: 0,
         locked: 0,
@@ -69,7 +69,10 @@ export function actionBuyOrder(payload: string) {
   }
 
   // TODO: can think if there may be no locked but quantity -> most prolly no
+
+  //@ts-ignore
   if (!(stockType in STOCK_BALANCES[userId][stockSymbol])) {
+    //@ts-ignore
     STOCK_BALANCES[userId][stockSymbol][stockType] = {
       quantity: 0,
       locked: 0,

@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import routes from "./routes";
 
 const app = express();
-const port = 3000;
+const PORT = process.env.HTTP_PORT || 3000;
 
 app.use(express.json());
 
@@ -10,8 +10,8 @@ app.use(express.json());
 
 app.use("/api/v1", routes);
 
-app.get("/", (req: Request, res: Response) => {
-  res.status(200).json({ message: "hello there" });
+app.get("/", (_req: Request, res: Response) => {
+  res.status(200).json({ message: "healthy" });
 });
 
-app.listen(port, () => console.log(`Started listening on ${port}`));
+app.listen(PORT, () => console.log(`Started listening on ${PORT}`));

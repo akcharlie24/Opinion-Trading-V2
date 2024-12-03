@@ -39,8 +39,8 @@ export function actionSellOrder(payload: string) {
   }
 
   if (!(stockSymbol in ORDERBOOK)) ORDERBOOK[stockSymbol] = {};
-  if (!(stockType in ORDERBOOK[stockSymbol]))
-    ORDERBOOK[stockSymbol][stockType] = {};
+  if (!(stockType in ORDERBOOK[stockSymbol]!))
+    ORDERBOOK[stockSymbol]![stockType] = {};
 
   STOCK_BALANCES[userId][stockSymbol][stockType]!.quantity -= quantity;
 
@@ -69,6 +69,7 @@ export function actionSellOrder(payload: string) {
       if (priceToSell + sortedPrice <= 10) {
         const ordersToMatch = Object.keys(
           // make a lil clean make a sortedPriceString simply
+          // @ts-ignore
           ORDERBOOK[stockSymbol][oppositeStockType]![sortedPrice.toString()]
             .orders,
         );
@@ -76,9 +77,11 @@ export function actionSellOrder(payload: string) {
         for (const order of ordersToMatch) {
           if (remainingQuantity == 0) break;
           const stocksTraded =
+            //@ts-ignore
             ORDERBOOK[stockSymbol][oppositeStockType]![sortedPrice.toString()]
               .orders[order].quantity <= remainingQuantity
-              ? ORDERBOOK[stockSymbol][oppositeStockType]![
+              ? //@ts-ignore
+                ORDERBOOK[stockSymbol][oppositeStockType]![
                   sortedPrice.toString()
                 ].orders[order].quantity
               : remainingQuantity;
@@ -88,48 +91,56 @@ export function actionSellOrder(payload: string) {
             (10 - sortedPrice) * stocksTraded * 100;
           const balanceTraded = priceToSell * stocksTraded * 100;
 
-          INR_BALANCES[userId].balance += balanceTraded;
+          INR_BALANCES[userId]!.balance += balanceTraded;
 
           if (
+            //@ts-ignore
             ORDERBOOK[stockSymbol][oppositeStockType]![sortedPrice.toString()]
               .orders[order].type == "regular"
           ) {
             //@ts-ignore
-            STOCK_BALANCES[order][stockSymbol][oppositeStockType]?.locked -=
+            STOCK_BALANCES[order][stockSymbol][oppositeStockType].locked -=
               stocksTraded;
-            INR_BALANCES[order].balance += oppositeBalanceTradedRegular;
+            INR_BALANCES[order]!.balance += oppositeBalanceTradedRegular;
           } else if (
+            //@ts-ignore
             ORDERBOOK[stockSymbol][oppositeStockType]![sortedPrice.toString()]
               .orders[order].type == "minted"
           ) {
             // TODO: keep in mind while buying to atleast create the quantity in their portfolio
 
             // @ts-ignore
-            STOCK_BALANCES[order][stockSymbol][stockType]?.quantity +=
+            STOCK_BALANCES[order][stockSymbol][stockType].quantity +=
               stocksTraded;
-            INR_BALANCES[order].locked -= oppositeBalanceTradedMinted;
+            INR_BALANCES[order]!.locked -= oppositeBalanceTradedMinted;
           }
 
           remainingQuantity -= stocksTraded;
 
+          //@ts-ignore
           ORDERBOOK[stockSymbol][oppositeStockType]![
             sortedPrice.toString()
           ].orders[order].quantity -= stocksTraded;
           if (
+            //@ts-ignore
             ORDERBOOK[stockSymbol][oppositeStockType]![sortedPrice.toString()]
               .orders[order].quantity == 0
           )
+            //@ts-ignore
             delete ORDERBOOK[stockSymbol][oppositeStockType]![
               sortedPrice.toString()
             ].orders[order];
 
+          //@ts-ignore
           ORDERBOOK[stockSymbol][oppositeStockType]![
             sortedPrice.toString()
           ].total -= stocksTraded;
           if (
+            //@ts-ignore
             ORDERBOOK[stockSymbol][oppositeStockType]![sortedPrice.toString()]
               .total == 0
           )
+            //@ts-ignore
             delete ORDERBOOK[stockSymbol][oppositeStockType]![
               sortedPrice.toString()
             ];
@@ -152,19 +163,23 @@ export function actionSellOrder(payload: string) {
       // TODO: CHECK can there be a case where there can be a price string but no total / orders ?
       // TODO: while buying make sure to delete the price Strings where the total goes to 0
 
+      //@ts-ignore
       ORDERBOOK[stockSymbol][stockType]![priceString].total +=
         remainingQuantity;
 
+      //@ts-ignore
       ORDERBOOK[stockSymbol][stockType]![priceString].orders[userId] = {
         type: "regular",
         quantity:
+          //@ts-ignore
           userId in ORDERBOOK[stockSymbol][stockType]![priceString].orders
-            ? ORDERBOOK[stockSymbol][stockType]![priceString].orders[userId]
+            ? //@ts-ignore
+              ORDERBOOK[stockSymbol][stockType]![priceString].orders[userId]
                 .quantity + remainingQuantity
             : remainingQuantity,
       };
     } else {
-      ORDERBOOK[stockSymbol][stockType]![priceString] = {
+      ORDERBOOK[stockSymbol]![stockType]![priceString] = {
         total: remainingQuantity,
         orders: {
           [userId]: {

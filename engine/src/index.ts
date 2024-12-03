@@ -1,4 +1,4 @@
-import { REQ_QUEUE } from "../backendApi/constants";
+import { REQ_QUEUE } from "./constants";
 import { actions } from "../types";
 import { pubSubManager } from "./PubSubManager";
 import { createRedisClientConnection, redisClient } from "./RedisClient";

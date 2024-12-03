@@ -10,7 +10,7 @@ export function actionOnRampINR(payload: string) {
     return response;
   }
 
-  INR_BALANCES[userId].balance += parseInt(amount);
+  INR_BALANCES[userId]!.balance += parseInt(amount);
 
   const response = {
     message: `Onramped ${userId} with amount ${parseInt(amount)}`,

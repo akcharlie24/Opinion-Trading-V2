@@ -25,7 +25,6 @@ export class PubSubManager {
     return PubSubManager.instance;
   }
 
-  // TODO: add logging while connecting and performing async calls
   async connectToRedis(): Promise<void> {
     try {
       if (!this.subscriberClient.isOpen) {
@@ -63,9 +62,14 @@ export class PubSubManager {
     await this.connectToRedis();
 
     try {
+      // FIX: unsubscribe to the reqId after executing the callback and also do a promise to unsubscribe in 2 sec response timed out
+      //  BEST: fix would be to rather create a single channel and implement a map (will need refactoring)
+
       await this.subscriberClient.subscribe(reqId, (message: string) => {
         try {
           callback(message);
+          // below might be a partial fix
+          // this.subscriberClient.unsubscribe(reqId)
         } catch (err) {
           console.log("Error excecuting response recieved");
         }
@@ -73,7 +77,6 @@ export class PubSubManager {
     } catch (err) {
       console.log("Error subscribing ");
     }
-    // TODO: should add a finally here in case the pub/sub has some error
   }
 }
 
