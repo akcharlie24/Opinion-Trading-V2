@@ -3,7 +3,7 @@ import routes from "./routes";
 import cors from "cors";
 
 const app = express();
-const PORT = process.env.HTTP_PORT || 3000;
+const HTTP_PORT = process.env.HTTP_PORT || 3000;
 
 // TODO: change later on to stricter policy (in E2E version)
 app.use(cors());
@@ -16,4 +16,4 @@ app.get("/", (_req: Request, res: Response) => {
   res.status(200).json({ message: "healthy" });
 });
 
-app.listen(PORT, () => console.log(`Started listening on ${PORT}`));
+app.listen(HTTP_PORT, () => console.log(`Started listening on ${HTTP_PORT}`));

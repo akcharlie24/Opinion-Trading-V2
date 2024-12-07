@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const WS_PORT = parseInt(process.env.WS_PORT || "3005", 10);
+
 const subscribedUsers: Map<string, Set<WebSocket>> = new Map();
 const stocksToListen: Set<string> = new Set();
 
@@ -93,8 +95,8 @@ async function startWebSocket() {
     }
   }
 
-  const wss = new WebSocketServer({ port: 8080 }, () => {
-    console.log(`Started Listening On 8080`);
+  const wss = new WebSocketServer({ port: WS_PORT }, () => {
+    console.log(`Started Listening On ${WS_PORT}`);
   });
 
   wss.on("connection", async function connection(ws: WebSocket) {
