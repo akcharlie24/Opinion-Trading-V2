@@ -1,4 +1,7 @@
 import { createClient, RedisClientType } from "redis";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export class PubSubManager {
   private static instance: PubSubManager | null = null;

@@ -1,5 +1,8 @@
 import { WebSocket, WebSocketServer } from "ws";
 import { pubSubManager } from "./PubSubManagerSockets";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const subscribedUsers: Map<string, Set<WebSocket>> = new Map();
 const stocksToListen: Set<string> = new Set();

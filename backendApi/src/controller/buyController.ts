@@ -16,7 +16,6 @@ export const createBuyOrder = async (req: Request, res: Response) => {
   const { userId, stockSymbol, quantity, price, stockType } = req.body;
 
   if (stockType !== "yes" && stockType !== "no") {
-    console.log(stockType);
     res.status(404).json({ message: "Invalid Stock Type" });
   }
 

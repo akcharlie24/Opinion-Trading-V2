@@ -1,4 +1,7 @@
 import { createClient, RedisClientType } from "redis";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export class PubSubManager {
   private static instance: PubSubManager | null = null;
@@ -55,7 +58,6 @@ export class PubSubManager {
   async unsubscribeFromStock(stockSymbol: string): Promise<void> {
     await this.connectToRedis();
     await this.subscriberClient.unsubscribe(stockSymbol);
-    console.log("unsubscribed from stock");
   }
 }
 
