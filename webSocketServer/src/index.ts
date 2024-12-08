@@ -24,7 +24,6 @@ async function startWebSocket() {
   async function addListenerToStock(stockSymbol: string): Promise<void> {
     await subscriberClient.connectToRedis();
     await subscriberClient.listenForSymbol(stockSymbol, (data) => {
-      console.log(data);
       broadcastMessage(stockSymbol, data);
     });
   }
