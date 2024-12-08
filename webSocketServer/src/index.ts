@@ -1,8 +1,8 @@
 import { WebSocket, WebSocketServer } from "ws";
 import { pubSubManager } from "./PubSubManagerSockets";
-import dotenv from "dotenv";
-
-dotenv.config();
+// import dotenv from "dotenv";
+//
+// dotenv.config();
 
 const WS_PORT = parseInt(process.env.WS_PORT || "3005", 10);
 
